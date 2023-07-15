@@ -12,8 +12,8 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-// Define the ArticleButtler plugin class.
-class ArticleButtler {
+// Define the ArticleButtlerPlugin class.
+class ArticleButtlerPlugin {
     /**
      * Plugin version.
      *
@@ -82,8 +82,8 @@ class ArticleButtler {
     }
 }
 
-// Instantiate the ArticleButtler plugin.
-$article_buttler = new ArticleButtler();
+// Instantiate the ArticleButtlerPlugin class.
+$article_buttler = new ArticleButtlerPlugin();
 
 
 // Plugin activation hook
@@ -103,7 +103,7 @@ function articlebuttler_deactivate() {
 }
 
 // Include the necessary files
-require_once plugin_dir_path(__FILE__) . 'includes/class-articlebuttler-admin.php';
+require_once plugin_dir_path(__FILE__) . 'admin/class-articlebuttler-admin.php';
 require_once plugin_dir_path(__FILE__) . 'includes/class-articlebuttler.php';
 
 // Include the public display file
