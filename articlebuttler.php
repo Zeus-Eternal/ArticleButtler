@@ -3,7 +3,7 @@
  * Plugin Name: ArticleButtler
  * Description: An advanced WordPress plugin for generating custom articles and images.
  * Version: 1.0.0
- * Author: Your Name
+ * Author: Zeus The Eternal
  * Author URI: https://yourwebsite.com
  */
 
@@ -37,10 +37,10 @@ class ArticleButtler {
      */
     public function load_dependencies() {
         // Load necessary files and classes here.
-        require_once plugin_dir_path(__FILE__) . 'includes/class-articlebuttler-settings.php';
-        require_once plugin_dir_path(__FILE__) . 'includes/class-articlebuttler-generator.php';
-        require_once plugin_dir_path(__FILE__) . 'includes/class-articlebuttler-image-generator.php';
-        require_once plugin_dir_path(__FILE__) . 'includes/class-articlebuttler-article-generator.php';
+        require_once plugin_dir_path(__FILE__) . '/includes/class-articlebuttler-settings.php';
+        require_once plugin_dir_path(__FILE__) . '/includes/class-articlebuttler-generator.php';
+        require_once plugin_dir_path(__FILE__) . '/includes/class-articlebuttler-image-generator.php';
+        require_once plugin_dir_path(__FILE__) . '/includes/class-articlebuttler-article-generator.php';
     }
 
     /**
@@ -80,7 +80,6 @@ class ArticleButtler {
 // Instantiate the ArticleButtler plugin.
 $article_buttler = new ArticleButtler();
 
-
 // Plugin activation hook
 register_activation_hook(__FILE__, 'articlebuttler_activate');
 
@@ -98,8 +97,8 @@ function articlebuttler_deactivate() {
 }
 
 // Include the necessary files
-require_once plugin_dir_path(__FILE__) . 'admin/class-articlebuttler-admin.php';
-require_once plugin_dir_path(__FILE__) . 'includes/class-articlebuttler.php';
+require_once plugin_dir_path(__FILE__) . '/admin/class-articlebuttler-admin.php';
+require_once plugin_dir_path(__FILE__) . '/includes/class-articlebuttler.php';
 
 // Include the public display file
-require_once plugin_dir_path(__FILE__) . 'public/partials/articlebuttler-public-display.php';
+require_once plugin_dir_path(__FILE__) . '/public/partials/articlebuttler-public-display.php';
