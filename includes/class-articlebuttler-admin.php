@@ -49,6 +49,8 @@ class ArticleButtler_Admin {
     }
 }
 
-// Instantiate the ArticleButtler_Admin class.
-$article_buttler_admin = new ArticleButtler_Admin();
-$article_buttler_admin->init();
+// Instantiate the ArticleButtler_Admin class if it doesn't already exist.
+if (!class_exists('ArticleButtler_Admin')) {
+    $article_buttler_admin = new ArticleButtler_Admin();
+    $article_buttler_admin->init();
+}
