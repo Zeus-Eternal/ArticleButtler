@@ -103,7 +103,7 @@ function articlebuttler_deactivate() {
 }
 
 // Include the necessary files
-require_once plugin_dir_path(__FILE__) . 'admin/class-articlebuttler-admin.php';
+require_once plugin_dir_path(__FILE__) . 'includes/class-articlebuttler-admin.php';
 require_once plugin_dir_path(__FILE__) . 'includes/class-articlebuttler.php';
 
 // Include the public display file
