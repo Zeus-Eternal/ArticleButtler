@@ -3,7 +3,7 @@
  * Plugin Name: ArticleButtler
  * Description: An advanced WordPress plugin for generating custom articles and images.
  * Version: 1.0.0
- * Author: Zeus The Eternal
+ * Author: Your Name
  * Author URI: https://yourwebsite.com
  */
 
@@ -79,6 +79,7 @@ class ArticleButtler {
 
 // Instantiate the ArticleButtler plugin.
 $article_buttler = new ArticleButtler();
+
 
 // Plugin activation hook
 register_activation_hook(__FILE__, 'articlebuttler_activate');
