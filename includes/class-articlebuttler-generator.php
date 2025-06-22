@@ -71,11 +71,49 @@ class ArticleButtler_Generator {
      * @return string The generated article.
      */
     private function generate_article($prompt) {
-        // Perform the article generation logic here using the chat-GPT model or other techniques.
-        // You can customize this method to suit your specific requirements and integrate with the necessary APIs or libraries.
+        $options = get_option('articlebuttler_options');
+        $api_key = isset($options['api_key']) ? trim($options['api_key']) : '';
 
-        // Return the generated article.
-        return 'This is a generated article based on the prompt: ' . $prompt;
+        if (empty($api_key)) {
+            return __('OpenAI API key is not configured.', 'articlebuttler');
+        }
+
+        $cache_key = 'articlebuttler_' . md5($prompt);
+        $cached     = get_transient($cache_key);
+        if (false !== $cached) {
+            return $cached;
+        }
+
+        $args = array(
+            'headers' => array(
+                'Authorization' => 'Bearer ' . $api_key,
+                'Content-Type'  => 'application/json',
+            ),
+            'body'    => wp_json_encode(array(
+                'model'    => 'gpt-3.5-turbo',
+                'messages' => array(
+                    array(
+                        'role'    => 'user',
+                        'content' => $prompt,
+                    ),
+                ),
+            )),
+            'timeout' => 20,
+        );
+
+        $response = wp_remote_post('https://api.openai.com/v1/chat/completions', $args);
+        if (is_wp_error($response)) {
+            return $response->get_error_message();
+        }
+
+        $data = json_decode(wp_remote_retrieve_body($response), true);
+        if (isset($data['choices'][0]['message']['content'])) {
+            $article = wp_kses_post($data['choices'][0]['message']['content']);
+            set_transient($cache_key, $article, HOUR_IN_SECONDS);
+            return $article;
+        }
+
+        return __('Failed to generate article.', 'articlebuttler');
     }
 
     /**

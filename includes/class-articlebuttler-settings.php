@@ -27,15 +27,109 @@ class ArticleButtler_Settings {
      * Render the settings page.
      */
     public function render_settings_page() {
-        // Display settings page content here.
+        ?>
+        <div class="wrap">
+            <h1><?php esc_html_e('ArticleButtler Settings', 'articlebuttler'); ?></h1>
+            <form method="post" action="options.php">
+                <?php
+                settings_fields('articlebuttler_settings_group');
+                do_settings_sections('articlebuttler-settings');
+                submit_button();
+                ?>
+            </form>
+        </div>
+        <?php
     }
 
     /**
      * Register the settings.
      */
     public function register_settings() {
-        // Register your settings here using the Settings API.
-        register_setting('articlebuttler_settings_group', 'articlebuttler_option');
+        register_setting(
+            'articlebuttler_settings_group',
+            'articlebuttler_options',
+            array('sanitize_callback' => array($this, 'sanitize_options'))
+        );
+
+        add_settings_section(
+            'articlebuttler_main',
+            __('Main Settings', 'articlebuttler'),
+            null,
+            'articlebuttler-settings'
+        );
+
+        add_settings_field(
+            'articlebuttler_api_key',
+            __('OpenAI API Key', 'articlebuttler'),
+            array($this, 'api_key_field'),
+            'articlebuttler-settings',
+            'articlebuttler_main'
+        );
+
+        add_settings_field(
+            'articlebuttler_prompt',
+            __('Default Prompt', 'articlebuttler'),
+            array($this, 'prompt_field'),
+            'articlebuttler-settings',
+            'articlebuttler_main'
+        );
+
+        add_settings_field(
+            'articlebuttler_image_library',
+            __('Image Library', 'articlebuttler'),
+            array($this, 'image_library_field'),
+            'articlebuttler-settings',
+            'articlebuttler_main'
+        );
+    }
+
+    public function api_key_field() {
+        $options = get_option('articlebuttler_options');
+        $api_key = isset($options['api_key']) ? esc_attr($options['api_key']) : '';
+        echo '<input type="text" name="articlebuttler_options[api_key]" value="' . $api_key . '" class="regular-text" />';
+    }
+
+    public function prompt_field() {
+        $options = get_option('articlebuttler_options');
+        $prompt = isset($options['prompt']) ? esc_attr($options['prompt']) : '';
+        echo '<input type="text" name="articlebuttler_options[prompt]" value="' . $prompt . '" class="regular-text" />';
+    }
+
+    public function image_library_field() {
+        $options = get_option('articlebuttler_options');
+        $library = isset($options['image_library']) ? $options['image_library'] : 'gd';
+        ?>
+        <select name="articlebuttler_options[image_library]">
+            <option value="gd" <?php selected($library, 'gd'); ?>>GD</option>
+            <option value="imagick" <?php selected($library, 'imagick'); ?>>Imagick</option>
+            <option value="api" <?php selected($library, 'api'); ?>>API</option>
+        </select>
+        <?php
+    }
+
+    /**
+     * Sanitize all plugin options.
+     *
+     * @param array $input Raw input values.
+     * @return array Sanitized options array.
+     */
+    public function sanitize_options($input) {
+        $output = array();
+
+        if (isset($input['api_key'])) {
+            $output['api_key'] = sanitize_text_field($input['api_key']);
+        }
+
+        if (isset($input['prompt'])) {
+            $output['prompt'] = sanitize_text_field($input['prompt']);
+        }
+
+        if (isset($input['image_library'])) {
+            $allowed             = array('gd', 'imagick', 'api');
+            $output['image_library'] = in_array($input['image_library'], $allowed, true) ? $input['image_library'] : 'gd';
+        }
+
+        return $output;
     }
 
     /**

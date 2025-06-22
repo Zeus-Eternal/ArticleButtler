@@ -2,7 +2,9 @@
 /**
  * Plugin Name: ArticleButtler
  * Description: An advanced WordPress plugin for generating custom articles and images.
- * Version: 1.0.0
+ * Version: 1.1.0
+ * Requires at least: 6.0
+ * Requires PHP: 8.0
  * Author: Your Name
  * Author URI: https://yourwebsite.com
  */
@@ -19,7 +21,7 @@ class ArticleButtlerPlugin {
      *
      * @var string
      */
-    private $version = '1.0.0';
+    private $version = '1.1.0';
 
     /**
      * Initialize the plugin.
@@ -60,9 +62,18 @@ class ArticleButtlerPlugin {
         $generator = new ArticleButtler_Generator();
         $generator->init();
 
+        // Initialize the image generator using selected library.
+        $options         = get_option('articlebuttler_options');
+        $library         = isset($options['image_library']) ? $options['image_library'] : 'gd';
+        $image_generator = new ArticleButtler_Image_Generator($library);
+        $image_generator->init();
+
         // Initialize the admin functionality.
         $admin = new ArticleButtler_Admin();
         $admin->init();
+
+        // Register shortcode for front-end display.
+        add_shortcode('articlebuttler', array($this, 'render_public_interface'));
     }
 
     /**
@@ -71,6 +82,12 @@ class ArticleButtlerPlugin {
     public function enqueue_admin_scripts() {
         wp_enqueue_style('articlebuttler-admin', plugin_dir_url(__FILE__) . 'admin/css/articlebuttler-admin.css', array(), $this->version);
         wp_enqueue_script('articlebuttler-admin', plugin_dir_url(__FILE__) . 'admin/js/articlebuttler-admin.js', array('jquery'), $this->version, true);
+
+        wp_localize_script('articlebuttler-admin', 'articlebuttler_vars', array(
+            'ajaxurl'       => admin_url('admin-ajax.php'),
+            'article_nonce' => wp_create_nonce('articlebuttler_generate_article'),
+            'image_nonce'   => wp_create_nonce('articlebuttler_generate_image'),
+        ));
     }
 
     /**
@@ -79,6 +96,21 @@ class ArticleButtlerPlugin {
     public function enqueue_public_scripts() {
         wp_enqueue_style('articlebuttler-public', plugin_dir_url(__FILE__) . 'public/css/articlebuttler-public.css', array(), $this->version);
         wp_enqueue_script('articlebuttler-public', plugin_dir_url(__FILE__) . 'public/js/articlebuttler-public.js', array('jquery'), $this->version, true);
+
+        wp_localize_script('articlebuttler-public', 'articlebuttler_public_vars', array(
+            'ajaxurl'       => admin_url('admin-ajax.php'),
+            'article_nonce' => wp_create_nonce('articlebuttler_generate_article'),
+            'image_nonce'   => wp_create_nonce('articlebuttler_generate_image'),
+        ));
+    }
+
+    /**
+     * Render the shortcode output.
+     */
+    public function render_public_interface() {
+        ob_start();
+        include plugin_dir_path(__FILE__) . 'public/partials/articlebuttler-public-display.php';
+        return ob_get_clean();
     }
 }
 
@@ -102,9 +134,3 @@ function articlebuttler_deactivate() {
     // Perform deactivation tasks, if any
 }
 
-// Include the necessary files
-require_once plugin_dir_path(__FILE__) . 'admin/class-articlebuttler-admin.php';
-require_once plugin_dir_path(__FILE__) . 'includes/class-articlebuttler.php';
-
-// Include the public display file
-require_once plugin_dir_path(__FILE__) . 'public/partials/articlebuttler-public-display.php';

@@ -11,9 +11,6 @@ class ArticleButtler_Admin {
     public function init() {
         // Add the plugin settings page.
         add_action('admin_menu', array($this, 'add_settings_page'));
-
-        // Register the plugin settings.
-        add_action('admin_init', array($this, 'register_settings'));
     }
 
     /**
@@ -36,21 +33,6 @@ class ArticleButtler_Admin {
      * Render the plugin settings page.
      */
     public function render_settings_page() {
-        // Add your settings page HTML and form rendering logic here.
-        // Customize this method to display the desired settings fields and options.
+        include plugin_dir_path(__FILE__) . '../admin/partials/articlebuttler-admin-display.php';
     }
-
-    /**
-     * Register the plugin settings.
-     */
-    public function register_settings() {
-        // Register your plugin settings here.
-        // Customize this method to add the necessary settings fields and sections.
-    }
-}
-
-// Instantiate the ArticleButtler_Admin class if it doesn't already exist.
-if (!class_exists('ArticleButtler_Admin')) {
-    $article_buttler_admin = new ArticleButtler_Admin();
-    $article_buttler_admin->init();
 }
