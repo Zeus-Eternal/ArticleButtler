@@ -15,6 +15,7 @@ $image_library = isset($options['image_library']) ? $options['image_library'] : 
 
 <div class="wrap articlebuttler-wrapper">
     <h1 class="articlebuttler-heading">ArticleButtler</h1>
+    <?php settings_errors(); ?>
 
     <form method="post" action="options.php">
         <?php

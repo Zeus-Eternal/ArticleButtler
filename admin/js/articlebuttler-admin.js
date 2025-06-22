@@ -9,7 +9,7 @@ jQuery(document).ready(function($) {
 
         // Perform AJAX request to generate article
         $.ajax({
-            url: ajaxurl,
+            url: articlebuttler_vars.ajaxurl,
             type: 'POST',
             dataType: 'json',
             data: {

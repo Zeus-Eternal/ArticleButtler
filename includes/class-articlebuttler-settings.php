@@ -45,6 +45,11 @@ class ArticleButtler_Settings {
      * Register the settings.
      */
     public function register_settings() {
+        register_setting(
+            'articlebuttler_settings_group',
+            'articlebuttler_options',
+            array('sanitize_callback' => array($this, 'sanitize_options'))
+        );
         register_setting('articlebuttler_settings_group', 'articlebuttler_options');
 
         add_settings_section(
@@ -101,6 +106,31 @@ class ArticleButtler_Settings {
             <option value="api" <?php selected($library, 'api'); ?>>API</option>
         </select>
         <?php
+    }
+
+    /**
+     * Sanitize all plugin options.
+     *
+     * @param array $input Raw input values.
+     * @return array Sanitized options array.
+     */
+    public function sanitize_options($input) {
+        $output = array();
+
+        if (isset($input['api_key'])) {
+            $output['api_key'] = sanitize_text_field($input['api_key']);
+        }
+
+        if (isset($input['prompt'])) {
+            $output['prompt'] = sanitize_text_field($input['prompt']);
+        }
+
+        if (isset($input['image_library'])) {
+            $allowed             = array('gd', 'imagick', 'api');
+            $output['image_library'] = in_array($input['image_library'], $allowed, true) ? $input['image_library'] : 'gd';
+        }
+
+        return $output;
     }
 
     /**

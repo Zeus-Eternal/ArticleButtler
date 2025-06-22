@@ -2,7 +2,9 @@
 /**
  * Plugin Name: ArticleButtler
  * Description: An advanced WordPress plugin for generating custom articles and images.
- * Version: 1.0.0
+ * Version: 1.1.0
+ * Requires at least: 6.0
+ * Requires PHP: 8.0
  * Author: Your Name
  * Author URI: https://yourwebsite.com
  */
@@ -19,7 +21,7 @@ class ArticleButtlerPlugin {
      *
      * @var string
      */
-    private $version = '1.0.0';
+    private $version = '1.1.0';
 
     /**
      * Initialize the plugin.
@@ -59,6 +61,12 @@ class ArticleButtlerPlugin {
         // Initialize the generator.
         $generator = new ArticleButtler_Generator();
         $generator->init();
+
+        // Initialize the image generator using selected library.
+        $options         = get_option('articlebuttler_options');
+        $library         = isset($options['image_library']) ? $options['image_library'] : 'gd';
+        $image_generator = new ArticleButtler_Image_Generator($library);
+        $image_generator->init();
 
         // Initialize the admin functionality.
         $admin = new ArticleButtler_Admin();

@@ -36,9 +36,3 @@ class ArticleButtler_Admin {
         include plugin_dir_path(__FILE__) . '../admin/partials/articlebuttler-admin-display.php';
     }
 }
-
-// Instantiate the ArticleButtler_Admin class if it doesn't already exist.
-if (!class_exists('ArticleButtler_Admin')) {
-    $article_buttler_admin = new ArticleButtler_Admin();
-    $article_buttler_admin->init();
-}
