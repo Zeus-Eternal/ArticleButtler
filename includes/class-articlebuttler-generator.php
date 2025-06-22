@@ -77,7 +77,7 @@ class ArticleButtler_Generator {
         if (empty($api_key)) {
             return __('OpenAI API key is not configured.', 'articlebuttler');
         }
-
+      
         $cache_key = 'articlebuttler_' . md5($prompt);
         $cached     = get_transient($cache_key);
         if (false !== $cached) {
@@ -97,11 +97,16 @@ class ArticleButtler_Generator {
                         'content' => $prompt,
                     ),
                 ),
+                'model'       => 'text-davinci-003',
+                'prompt'      => $prompt,
+                'max_tokens'  => 150,
+                'temperature' => 0.7,
             )),
             'timeout' => 20,
         );
 
         $response = wp_remote_post('https://api.openai.com/v1/chat/completions', $args);
+        $response = wp_remote_post('https://api.openai.com/v1/completions', $args);
         if (is_wp_error($response)) {
             return $response->get_error_message();
         }
@@ -111,6 +116,8 @@ class ArticleButtler_Generator {
             $article = wp_kses_post($data['choices'][0]['message']['content']);
             set_transient($cache_key, $article, HOUR_IN_SECONDS);
             return $article;
+        if (isset($data['choices'][0]['text'])) {
+            return sanitize_textarea_field($data['choices'][0]['text']);
         }
 
         return __('Failed to generate article.', 'articlebuttler');

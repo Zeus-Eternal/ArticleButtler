@@ -50,6 +50,7 @@ class ArticleButtler_Settings {
             'articlebuttler_options',
             array('sanitize_callback' => array($this, 'sanitize_options'))
         );
+        register_setting('articlebuttler_settings_group', 'articlebuttler_options');
 
         add_settings_section(
             'articlebuttler_main',
