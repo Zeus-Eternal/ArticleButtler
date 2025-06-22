@@ -13,9 +13,9 @@ jQuery(document).ready(function($) {
             type: 'POST',
             dataType: 'json',
             data: {
-                action: 'articlebuttler_generate_article',
+                action: 'generate_article',
                 prompt: prompt,
-                nonce: articlebuttler_public_vars.nonce
+                nonce: articlebuttler_public_vars.article_nonce
             },
             beforeSend: function() {
                 // Show loading spinner or any other UI indication

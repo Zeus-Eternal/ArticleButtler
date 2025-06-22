@@ -15,7 +15,7 @@ jQuery(document).ready(function($) {
             data: {
                 action: 'generate_article',
                 prompt: prompt,
-                nonce: articlebuttler_vars.nonce
+                nonce: articlebuttler_vars.article_nonce
             },
             beforeSend: function() {
                 // Show loading spinner or any other UI indication
