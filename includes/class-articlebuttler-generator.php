@@ -71,11 +71,38 @@ class ArticleButtler_Generator {
      * @return string The generated article.
      */
     private function generate_article($prompt) {
-        // Perform the article generation logic here using the chat-GPT model or other techniques.
-        // You can customize this method to suit your specific requirements and integrate with the necessary APIs or libraries.
+        $options = get_option('articlebuttler_options');
+        $api_key = isset($options['api_key']) ? trim($options['api_key']) : '';
 
-        // Return the generated article.
-        return 'This is a generated article based on the prompt: ' . $prompt;
+        if (empty($api_key)) {
+            return __('OpenAI API key is not configured.', 'articlebuttler');
+        }
+
+        $args = array(
+            'headers' => array(
+                'Authorization' => 'Bearer ' . $api_key,
+                'Content-Type'  => 'application/json',
+            ),
+            'body'    => wp_json_encode(array(
+                'model'       => 'text-davinci-003',
+                'prompt'      => $prompt,
+                'max_tokens'  => 150,
+                'temperature' => 0.7,
+            )),
+            'timeout' => 20,
+        );
+
+        $response = wp_remote_post('https://api.openai.com/v1/completions', $args);
+        if (is_wp_error($response)) {
+            return $response->get_error_message();
+        }
+
+        $data = json_decode(wp_remote_retrieve_body($response), true);
+        if (isset($data['choices'][0]['text'])) {
+            return sanitize_textarea_field($data['choices'][0]['text']);
+        }
+
+        return __('Failed to generate article.', 'articlebuttler');
     }
 
     /**
